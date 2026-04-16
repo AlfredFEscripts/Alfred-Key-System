@@ -1,0 +1,13 @@
+function startAd() {
+    const user = document.getElementById('usernameInput').value;
+    if (user.length < 3) return alert("Please enter your name!");
+
+    // This is your unique ID from the link you just found
+    const lootID = "LnjfeD7K"; 
+
+    // This builds the bridge between your site, LootLabs, and Pipedream
+    const finalLink = `https://lootdest.org/s?${lootID}&subid=${encodeURIComponent(user)}`;
+    
+    window.location.href = finalLink;
+}
+
