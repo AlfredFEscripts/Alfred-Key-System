@@ -1,12 +1,27 @@
-function startAd() {
-    const user = document.getElementById('usernameInput').value;
-    if (user.length < 3) return alert("Please enter your name!");
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alfred Key System</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        input { padding: 10px; border-radius: 5px; border: none; width: 250px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #00ff88; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Enter Roblox Username</h2>
+    <input type="text" id="usernameInput" placeholder="Your Name...">
+    <br>
+    <button onclick="startAd()">Get Key</button>
 
-    // This is your unique ID from the link you just found
-    const lootID = "LnjfeD7K"; 
-
-    // This builds the bridge between your site, LootLabs, and Pipedream
-    const finalLink = `https://lootdest.org/s?${lootID}&subid=${encodeURIComponent(user)}`;
-    
-    window.location.href = finalLink;
-}
+    <script>
+        function startAd() {
+            const user = document.getElementById('usernameInput').value;
+            if (user.length < 3) return alert("Please enter your name!");
+            const lootID = "LnjfeD7K"; 
+            const finalLink = `https://lootdest.org/s?${lootID}&subid=${encodeURIComponent(user)}`;
+            window.location.href = finalLink;
+        }
+    </script>
+</body>
+</html>
